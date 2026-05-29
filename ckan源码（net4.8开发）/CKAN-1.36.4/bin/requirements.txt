@@ -1,6 +1,0 @@
-click
-exitstatus
-gitpython
-jsonschema
-pygithub
-requests

@@ -37,11 +37,12 @@ logs/
 Thumbs.db
 
 # Source code directories (not needed in repo)
-ckan-m*/
-ckan源码/
-lmp*/
-lmp源码/
-ckan源码/
+ckan-m源码/
+ckan*源码*/
+lmp*源码*/
+
+# Data files (fake KSP)
+data/ksp_fake/
 
 # Temporary files
 nul
