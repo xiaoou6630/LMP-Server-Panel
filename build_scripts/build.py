@@ -21,6 +21,8 @@ def find_upx():
         ROOT / "upx.exe",
         Path("upx") / "upx.exe",
         Path("upx.exe"),
+        Path("e:/daima/block/upx/upx-4.2.2-win64/upx.exe"),
+        Path("e:/daima/block/upx/upx-4.2.2-win64") / "upx.exe",
     ]
     if sys.platform == "win32":
         try:
@@ -50,9 +52,22 @@ def build():
     print(f"  版本: {settings.APP_VERSION}")
     print("=" * 60)
 
+    # 检查虚拟环境
+    venv_python = ROOT / "venv" / "Scripts" / "python.exe"
+    if not venv_python.exists():
+        print(f"\n  [错误] 未找到虚拟环境: {venv_python}")
+        print("  请先运行: python -m venv venv")
+        print("  然后运行: venv\\Scripts\\pip install -r requirements.txt")
+        sys.exit(1)
+
+    # 使用 venv 中的 pip 安装 pyinstaller（如果未安装）
+    pip_cmd = [str(ROOT / "venv" / "Scripts" / "pip.exe"), "install", "pyinstaller>=6.4.0"]
+    print(f"\n正在检查 PyInstaller...")
+    subprocess.run(pip_cmd, check=False, capture_output=True)
+
     upx_path = find_upx()
     if upx_path:
-        print(f"\n  UPX 已找到: {upx_path}")
+        print(f"  UPX 已找到: {upx_path}")
     else:
         print("\n  [提示] UPX 未找到，将跳过压缩。")
         print("  下载 UPX: https://upx.github.io/")
@@ -78,7 +93,7 @@ def build():
         f"--add-data={ROOT / 'frontend'}{sep}frontend",
     ]
 
-    cmd = ["pyinstaller",
+    cmd = [str(ROOT / "venv" / "Scripts" / "pyinstaller.exe"),
            "--onefile",
            "--console",
            f"--name", exe_name,
@@ -138,18 +153,30 @@ def build():
             shutil.copytree(tools_src, tools_dst)
             print(f"  已复制 tools/ 到 release/")
 
-        readme = release_dir / "README.txt"
+        readme = release_dir / "使用说明.txt"
         readme.write_text(
-            "ML - KSP LMP LianJi MianBanFu\n"
-            "Author: xiaoou6630\n"
-            "=" * 40 + "\n\n"
-            "Usage:\n"
-            "1. Double-click ML_Server_Manager.exe\n"
-            "2. Open http://127.0.0.1:8080 in browser\n"
-            "3. Follow the wizard to create admin account\n"
-            "4. LMP server files are in tools/lmp_server/LMPServer/\n"
-            "5. Click Start Server on the dashboard\n\n"
-            "Note: Set admin password on first launch for security.\n",
+            "ML 服务器管理器 - KSP 多人联机服务端\n"
+            "作者: xiaoou6630\n"
+            "版本: " + settings.APP_VERSION + "\n"
+            "=" * 50 + "\n\n"
+            "快速开始:\n"
+            "1. 双击 ML_Server_Manager.exe 启动程序\n"
+            "2. 浏览器打开 http://127.0.0.1:8080\n"
+            "3. 首次使用请按提示设置管理员密码\n"
+            "4. 在网页界面中点击「启动服务器」\n\n"
+            "功能说明:\n"
+            "- 配置编辑器: 修改服务器名称、端口、玩家数量等\n"
+            "- 模组管理: 管理 CKAN 模组列表，支持黑白名单\n"
+            "- 服务器控制: 启动/停止/重启 LMP 服务端\n"
+            "- 实时日志: 在网页中查看服务器运行日志\n\n"
+            "注意事项:\n"
+            "- 修改配置后需重启服务器才能生效\n"
+            "- LMP 服务端文件位于 tools/lmp_server/LMPServer/\n"
+            "- 关闭服务器时请用 Ctrl+C 确保存档备份\n\n"
+            "遇到问题? 请检查:\n"
+            "1. 端口是否被其他程序占用\n"
+            "2. 防火墙是否阻止了连接\n"
+            "3. KSP 游戏路径是否设置正确\n",
             encoding="utf-8"
         )
         print(f"  README 已生成: {readme}")
