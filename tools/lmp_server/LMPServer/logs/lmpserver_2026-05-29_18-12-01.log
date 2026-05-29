@@ -1,0 +1,17 @@
+[10:12:01][Info]: Remember! Quit the server by using 'Control + C' so a backup is properly made before closing!
+[10:12:01][Info]: Documentation available at https://github.com/LunaMultiplayer/LunaMultiplayer/wiki
+[10:12:02][LMP]: Luna Server version: 0.29.1 (e:\daima\ml\tools\lmp_server\LMPServer\)
+[10:12:02][Error]: Failed to initialize CraftCreationAndRemoval.txt: The process cannot access the file 'e:\daima\ml\tools\lmp_server\LMPServer\logs\CraftCreationAndRemoval.txt' because it is being used by another process.
+[10:12:02][Debug]: Loading universe... 0.62KB
+[10:12:02][Debug]: Loading groups...
+[10:12:02][Debug]: Loading settings...
+[10:12:02][Fatal]: Error while trying to read e:\daima\ml\tools\lmp_server\LMPServer\Config\GeneralSettings.xml. Default settings will be used. Please remove the file so a new one can be generated
+[10:12:02][Fatal]: Error while trying to read e:\daima\ml\tools\lmp_server\LMPServer\Config\WarpSettings.xml. Default settings will be used. Please remove the file so a new one can be generated
+[10:12:02][Info]: Your GameplaySettings file is different than your GeneralSettings - Difficulty value. So the difficulty setting will be set as "Custom". In case you want to use the default setting values for Normal. Remove the GameplaySettings.xml file so it's recreated again
+[10:12:02][Warning]: Default server name detected! Consider changing it in GeneralSettings.xml.
+[10:12:02][Warning]: Default server description detected! Consider changing it in GeneralSettings.xml.
+[10:12:02][Debug]: Loading mod control...
+[10:12:02][Debug]: Loading plugins...
+[10:12:02][LMP]: Starting 'Luna Server' on Address [::] Port 8801... 
+[10:12:02][Fatal]: Port 8801 is already in use
+[10:12:25][LMP]: Exiting... Please wait until all threads are finished

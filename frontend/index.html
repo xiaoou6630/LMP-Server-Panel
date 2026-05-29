@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ML - KSP LMP 联机面板服</title>
+<script src="/static/js/vue.global.prod.js"></script>
+<style>
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --accent: #58a6ff;
+  --accent-hover: #79c0ff;
+  --success: #3fb950;
+  --warning: #d29922;
+  --danger: #f85149;
+  --border: #30363d;
+  --radius: 8px;
+}
+[v-cloak]{display:none}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg-primary);color:var(--text-primary);overflow:hidden;height:100vh}
+#app{display:flex;height:100vh}
+.sidebar{width:220px;background:var(--bg-secondary);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-header{padding:20px;border-bottom:1px solid var(--border)}
+.sidebar-header h1{font-size:20px;font-weight:700;color:var(--accent);letter-spacing:1px}
+.sidebar-header .version{font-size:11px;color:var(--text-secondary);margin-top:2px}
+.sidebar-nav{flex:1;padding:10px 0}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:var(--text-secondary);cursor:pointer;transition:all 0.15s;font-size:14px;border-left:3px solid transparent}
+.nav-item:hover{background:var(--bg-tertiary);color:var(--text-primary)}
+.nav-item.active{background:var(--bg-tertiary);color:var(--accent);border-left-color:var(--accent)}
+.nav-item .icon{width:20px;text-align:center;font-size:16px}
+.sidebar-footer{padding:12px 20px;border-top:1px solid var(--border);font-size:12px;color:var(--text-secondary)}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.status-dot.online{background:var(--success);box-shadow:0 0 6px var(--success)}
+.status-dot.offline{background:var(--danger);box-shadow:0 0 6px var(--danger)}
+.main{flex:1;overflow-y:auto;padding:0}
+.page{display:none;padding:30px}
+.page.active{display:block}
+.page-title{font-size:22px;font-weight:600;margin-bottom:24px;color:var(--text-primary)}
+.section-title{font-size:16px;font-weight:600;margin:20px 0 12px;color:var(--text-primary);border-bottom:1px solid var(--border);padding-bottom:8px}
+.card{background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.card-header{font-size:14px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px}
+.card-value{font-size:28px;font-weight:700;color:var(--text-primary)}
+.card-sub{font-size:12px;color:var(--text-secondary);margin-top:4px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:20px}
+.nav-item{border-radius:0 8px 8px 0;margin:2px 8px}
+.btn{padding:9px 20px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.2s ease;display:inline-flex;align-items:center;gap:6px;position:relative;overflow:hidden;letter-spacing:0.01em}
+.btn::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.1) 0%,transparent 50%);pointer-events:none}
+.btn:active{transform:scale(0.97)}
+.btn:disabled{opacity:0.35;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(135deg,#58a6ff 0%,#388bfd 100%);color:#fff;box-shadow:0 2px 8px rgba(88,166,255,0.25)}
+.btn-primary:hover:not(:disabled){background:linear-gradient(135deg,#79c0ff 0%,#58a6ff 100%);box-shadow:0 4px 16px rgba(88,166,255,0.4);transform:translateY(-1px)}
+.btn-success{background:linear-gradient(135deg,#3fb950 0%,#2ea043 100%);color:#fff;box-shadow:0 2px 8px rgba(63,185,80,0.25)}
+.btn-success:hover:not(:disabled){background:linear-gradient(135deg,#56d364 0%,#3fb950 100%);box-shadow:0 4px 16px rgba(63,185,80,0.4);transform:translateY(-1px)}
+.btn-danger{background:linear-gradient(135deg,#f85149 0%,#da3633 100%);color:#fff;box-shadow:0 2px 8px rgba(248,81,73,0.25)}
+.btn-danger:hover:not(:disabled){background:linear-gradient(135deg,#ff6a63 0%,#f85149 100%);box-shadow:0 4px 16px rgba(248,81,73,0.4);transform:translateY(-1px)}
+.btn-warning{background:linear-gradient(135deg,#d29922 0%,#b8841b 100%);color:#000;box-shadow:0 2px 8px rgba(210,153,34,0.25)}
+.btn-warning:hover:not(:disabled){background:linear-gradient(135deg,#e3b34f 0%,#d29922 100%);box-shadow:0 4px 16px rgba(210,153,34,0.4);transform:translateY(-1px)}
+.btn:disabled:hover{transform:none;box-shadow:none}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap}
+.console-box{background:#000;color:#0f0;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;padding:15px;border-radius:var(--radius);height:400px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;border:1px solid var(--border)}
+.console-input{display:flex;gap:8px;margin-top:10px}
+.console-input input{flex:1;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text-primary);font-size:13px;font-family:'Cascadia Code','Consolas',monospace}
+.console-input input:focus{outline:none;border-color:var(--accent)}
+.table{width:100%;border-collapse:collapse;font-size:13px}
+.table th,.table td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border)}
+.table th{color:var(--text-secondary);font-weight:600;text-transform:uppercase;font-size:11px}
+.table tr:hover{background:var(--bg-tertiary)}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:6px}
+.form-label-row{display:flex;align-items:center;gap:8px}
+.tooltip-trigger{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--bg-tertiary);color:var(--text-secondary);cursor:help;font-size:11px;font-weight:700;transition:all 0.15s;position:relative}
+.tooltip-trigger:hover{background:var(--accent);color:#fff}
+.tooltip-box{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--bg-tertiary);border:1px solid var(--border);border-radius:8px;padding:12px 16px;width:300px;z-index:100;font-weight:400;font-size:12px;line-height:1.6;color:var(--text-primary);white-space:pre-line;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+.tooltip-trigger:hover .tooltip-box{display:block}
+.form-input{width:100%;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text-primary);font-size:13px;transition:all 0.2s ease}
+.form-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(88,166,255,0.15)}
+.form-input.error{border-color:var(--danger);box-shadow:0 0 0 3px rgba(248,81,73,0.15)}
+.form-input.warning{border-color:var(--warning);box-shadow:0 0 0 3px rgba(210,153,34,0.15)}
+select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%2358a6ff' viewBox='0 0 16 16'%3E%3Cpath d='M4.7 5.3a1 1 0 011.4 0L8 7.3l1.9-2a1 1 0 111.4 1.4l-2.6 2.6a1 1 0 01-1.4 0L4.7 6.7a1 1 0 010-1.4z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px;cursor:pointer}
+select.form-input:hover{border-color:var(--accent)}
+select.form-input:focus{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%2379c0ff' viewBox='0 0 16 16'%3E%3Cpath d='M11.3 10.7a1 1 0 01-1.4 0L8 8.7l-1.9 2a1 1 0 01-1.4-1.4l2.6-2.6a1 1 0 011.4 0l2.6 2.6a1 1 0 010 1.4z'/%3E%3C/svg%3E")}
+select.form-input option{background:var(--bg-secondary);color:var(--text-primary);padding:10px}
+.field-hint{font-size:11px;margin-top:4px;line-height:1.5}
+.field-hint.error{color:var(--danger)}
+.field-hint.warning{color:var(--warning)}
+.field-hint.desc{color:var(--text-secondary)}
+.tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid var(--border)}
+.tab{padding:10px 20px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text-secondary);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.2s ease;position:relative}
+.tab:hover{color:var(--text-primary)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.config-save-bar{display:flex;align-items:center;gap:12px;padding:16px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);margin-top:20px;position:sticky;bottom:0}
+.config-save-bar .validation-summary{flex:1;font-size:13px}
+.config-save-bar .validation-summary .err{color:var(--danger)}
+.config-save-bar .validation-summary .warn{color:var(--warning)}
+.search-box{display:flex;gap:10px;margin-bottom:16px}
+.search-box input{flex:1;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:6px;padding:10px 14px;color:var(--text-primary);font-size:13px}
+.search-box input:focus{outline:none;border-color:var(--accent)}
+.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.mod-card{background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:border-color 0.15s}
+.mod-card:hover,.mod-card.selected{border-color:var(--accent)}
+.mod-card.selected{background:var(--bg-tertiary)}
+.mod-card h4{font-size:14px;margin-bottom:6px;color:var(--accent)}
+.mod-card .abstract{font-size:12px;color:var(--text-secondary);margin-bottom:10px;line-height:1.4}
+.mod-card .meta{font-size:11px;color:var(--text-secondary);margin-bottom:10px}
+.mod-card .meta span{margin-right:12px}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.badge-installed{background:rgba(63,185,80,0.2);color:var(--success)}
+.badge-disabled{background:rgba(139,148,158,0.2);color:var(--text-secondary)}
+.loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--text-secondary)}
+.loading::after{content:'';display:inline-block;width:20px;height:20px;border:2px solid var(--text-secondary);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin-left:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.wizard{max-width:520px;margin:40px auto}
+.wizard-steps{display:flex;gap:8px;margin-bottom:30px}
+.wizard-step{flex:1;text-align:center;font-size:12px;color:var(--text-secondary)}
+.wizard-step .dot{width:12px;height:12px;border-radius:50%;background:var(--bg-tertiary);border:2px solid var(--border);margin:0 auto 8px}
+.wizard-step.active .dot{border-color:var(--accent);background:var(--accent)}
+.wizard-step.done .dot{border-color:var(--success);background:var(--success)}
+.wizard-step.active{color:var(--accent)}
+.wizard-step.done{color:var(--success)}
+.wizard-body{background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:30px}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:1000}
+.modal{background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;padding:30px;max-width:480px;width:90%}
+.modal h3{font-size:18px;margin-bottom:12px}
+.modal p{font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.5}
+.modal .btn-group{justify-content:flex-end}
+.resource-bar{height:6px;border-radius:3px;background:var(--bg-tertiary);margin-top:6px;overflow:hidden}
+.resource-bar-fill{height:100%;border-radius:3px;transition:width 0.5s}
+.resource-bar-fill.cpu{background:var(--accent)}
+.resource-bar-fill.mem{background:var(--success)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg-primary)}
+::-webkit-scrollbar-thumb{background:var(--bg-tertiary);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--border)}
+.rule-badge-allow{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:var(--success);color:#fff}
+.rule-badge-deny{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:var(--danger);color:#fff}
+.rule-badge-force{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:var(--accent);color:#fff}
+.inline-select{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:5px 10px;font-size:12px;margin-right:8px;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%2358a6ff' viewBox='0 0 16 16'%3E%3Cpath d='M4.7 5.3a1 1 0 011.4 0L8 7.3l1.9-2a1 1 0 111.4 1.4l-2.6 2.6a1 1 0 01-1.4 0L4.7 6.7a1 1 0 010-1.4z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:28px;transition:all 0.2s ease}
+.inline-select:hover{border-color:var(--accent);box-shadow:0 0 0 2px rgba(88,166,255,0.15)}
+.inline-select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(88,166,255,0.25)}
+input[type="checkbox"]{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+input[type="number"]::-webkit-inner-spin-button{opacity:0.5}
+details summary{cursor:pointer;padding:6px 0;font-weight:600;font-size:13px;color:var(--accent);transition:color 0.15s}
+details summary:hover{color:var(--accent-hover)}
+.export-modal{max-width:600px}
+.export-mod-list{max-height:300px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;padding:8px;margin-top:4px}
+.export-mod-item{display:flex;align-items:center;gap:8px;padding:6px 8px;font-size:13px;border-radius:4px}
+.export-mod-item:hover{background:var(--bg-tertiary)}
+.export-mod-item input[type="checkbox"]{width:16px;height:16px;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="app" v-cloak>
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h1>ML</h1>
+      <div class="version">KSP LMP 联机面板服 v1.0</div>
+    </div>
+    <div class="sidebar-nav">
+      <div v-for="item in menuItems" :key="item.id" class="nav-item" :class="{active:currentPage===item.id}" @click="navigate(item.id)">
+        <span class="icon" v-html="item.icon"></span>
+        <span>{{item.label}}</span>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <span class="status-dot" :class="{online:serverStatus.online,offline:!serverStatus.online}"></span>
+      {{serverStatus.online?'服务器在线':'服务器离线'}}
+      <span v-if="serverStatus.online" style="margin-left:8px">{{serverStatus.player_count}} 玩家</span>
+    </div>
+  </div>
+  <div class="main">
+
+    <div class="page" :class="{active:currentPage==='dashboard'}" v-if="!showPasswordLogin">
+      <div class="page-title">仪表盘</div>
+      <div class="stats-grid">
+        <div class="card">
+          <div class="card-header">服务器状态</div>
+          <div class="card-value" :style="{color:serverStatus.online?'var(--success)':'var(--danger)'}">{{serverStatus.online?'运行中':'已离线'}}</div>
+          <div class="card-sub" v-if="serverStatus.online">运行时长 {{formatUptime(serverStatus.uptime)}}</div>
+          <div class="card-sub" v-if="!serverStatus.online">上次启动: {{serverStatus.last_start_time||'--'}}</div>
+        </div>
+        <div class="card">
+          <div class="card-header">CPU 占用</div>
+          <div class="card-value">{{serverStatus.cpu_percent.toFixed(1)}}%</div>
+          <div class="resource-bar"><div class="resource-bar-fill cpu" :style="{width:serverStatus.cpu_percent+'%'}"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header">内存占用</div>
+          <div class="card-value">{{serverStatus.memory_mb.toFixed(0)}} MB</div>
+          <div class="resource-bar"><div class="resource-bar-fill mem" :style="{width:memoryPercent+'%'}"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header">在线玩家</div>
+          <div class="card-value">{{serverStatus.player_count||0}}</div>
+          <div class="card-sub">{{serverStatus.player_names.join(', ')||'暂无玩家'}}</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title">系统资源</div>
+        <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
+          <div><div style="font-size:12px;color:var(--text-secondary)">CPU</div><div style="font-size:18px;font-weight:700">{{sysInfo.cpu_percent}}%</div></div>
+          <div><div style="font-size:12px;color:var(--text-secondary)">内存</div><div style="font-size:18px;font-weight:700">{{sysInfo.memory_used_gb}}/{{sysInfo.memory_total_gb}} GB</div></div>
+          <div><div style="font-size:12px;color:var(--text-secondary)">磁盘</div><div style="font-size:18px;font-weight:700">{{sysInfo.disk_used_gb}}/{{sysInfo.disk_total_gb}} GB</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title">快速操作</div>
+        <div class="btn-group">
+          <button class="btn btn-success" @click="serverStart" :disabled="serverStatus.online||serverLoading">启动服务器</button>
+          <button class="btn btn-warning" @click="serverStop" :disabled="!serverStatus.online||serverLoading">停止服务器</button>
+          <button class="btn btn-danger" @click="serverRestart" :disabled="!serverStatus.online||serverLoading">强制重启</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" :class="{active:currentPage==='console'}" v-if="!showPasswordLogin">
+      <div class="page-title">控制台</div>
+      <div class="card">
+        <div class="console-box" ref="consoleBox">
+          <div v-for="(line,idx) in consoleLines" :key="idx" :style="{color:lineColor(line)}">{{formatLine(line)}}</div>
+          <div v-if="consoleLines.length===0" style="color:var(--text-secondary)">等待服务器启动...</div>
+        </div>
+        <div class="console-input">
+          <input v-model="consoleCommand" @keyup.enter="sendCommand" placeholder="输入 LMP 指令..." :disabled="!serverStatus.online">
+          <button class="btn btn-primary" @click="sendCommand" :disabled="!serverStatus.online||!consoleCommand.trim()">发送</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" :class="{active:currentPage==='config'}" v-if="!showPasswordLogin">
+      <div class="page-title">配置编辑器</div>
+      <div class="tabs">
+        <div v-for="cat in configCategories" :key="cat.key" class="tab" :class="{active:configTab===cat.key}" @click="configTab=cat.key">{{cat.label}}</div>
+      </div>
+      <div v-for="field in filteredConfigFields" :key="field.key" class="form-group">
+        <div class="form-label-row">
+          <label>{{field.label}} ({{field.key}})</label>
+          <div class="tooltip-trigger" v-if="field.tooltip">
+            ?
+            <div class="tooltip-box">{{field.tooltip}}</div>
+          </div>
+        </div>
+        <input v-if="field.type==='string'||field.type==='int'" :type="field.type==='int'?'number':'text'" class="form-input"
+          :class="fieldState(field.key).cls" v-model="configValues[field.key]" @input="validateField(field.key)"
+          :min="field.min_value" :max="field.max_value">
+        <select v-else-if="field.type==='select'" class="form-input" :class="fieldState(field.key).cls" v-model="configValues[field.key]" @change="validateField(field.key)">
+          <option v-for="opt in field.options" :key="opt" :value="opt">{{opt}}</option>
+        </select>
+        <label v-else-if="field.type==='bool'" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" v-model="configValues[field.key]" style="width:18px;height:18px">
+          <span style="font-weight:400;color:var(--text-secondary)" :style="{color:configValues[field.key]?'var(--success)':'var(--text-secondary)'}">
+            {{configValues[field.key]?'已启用':'已禁用'}}
+          </span>
+        </label>
+        <div class="field-hint desc" v-if="field.description && !fieldState(field.key).msg">{{field.description}}</div>
+        <div class="field-hint" :class="fieldState(field.key).level" v-if="fieldState(field.key).msg">{{fieldState(field.key).msg}}</div>
+      </div>
+      <div class="config-save-bar">
+        <span style="color:var(--success);font-size:13px" v-if="configSaved">已自动保存 {{configSavedTime}}</span>
+        <span style="color:var(--text-secondary);font-size:13px" v-else-if="configSaving">保存中...</span>
+      </div>
+    </div>
+
+    <div class="page" :class="{active:currentPage==='mods'}" v-if="!showPasswordLogin">
+      <div class="page-title" style="display:flex;justify-content:space-between;align-items:center">
+        <span>模组名单管理</span>
+        <button class="btn btn-primary" @click="showExportCKAN">导出 .ckan</button>
+      </div>
+
+      <div class="tabs">
+        <div class="tab" :class="{active:modTab==='search'}" @click="modTab='search'">模组商店</div>
+        <div class="tab" :class="{active:modTab==='list'}" @click="loadModList">已添加名单 ({{modList.length}})</div>
+      </div>
+
+      <div v-if="modTab==='search'">
+        <div class="search-box">
+          <input v-model="modSearchQuery" @keyup.enter="searchMods" placeholder="输入关键词搜索 CKAN 模组...">
+          <button class="btn btn-primary" @click="searchMods" :disabled="modSearching">{{modSearching?'搜索中...':'搜索'}}</button>
+          <button class="btn btn-warning" @click="browseAllMods" :disabled="modSearching">{{browsingAll?'加载中...':'浏览全部'}}</button>
+        </div>
+
+        <div class="loading" v-if="modSearching">正在搜索...</div>
+        <div style="display:flex;gap:12px" v-else-if="modResults.length">
+          <div style="flex:1">
+            <div v-for="mod in modResults" :key="mod.identifier" class="mod-card" :class="{selected:selectedMod?.identifier===mod.identifier}" @click="showModDetail(mod)" style="cursor:pointer">
+              <div>
+                <div style="display:flex;align-items:baseline;gap:6px">
+                  <h4>{{mod.display_name||mod.name||mod.identifier}}</h4>
+                  <span style="font-size:11px;color:var(--text-secondary)">({{mod.identifier}})</span>
+                </div>
+                <div class="meta">
+                  <span>v{{mod.version||'?'}}</span>
+                  <span v-if="mod.author">作者: {{mod.author}}</span>
+                </div>
+                <div class="abstract">{{mod.abstract||'暂无描述'}}</div>
+              </div>
+              <div @click.stop style="margin-top:8px">
+                <button class="btn btn-primary" style="padding:4px 12px;font-size:11px" @click="addToModList(mod.identifier, mod.display_name||mod.name||mod.identifier)">添加到名单</button>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="width:320px;flex-shrink:0;align-self:flex-start;position:sticky;top:12px" v-if="selectedMod">
+            <div style="font-weight:600;font-size:14px;margin-bottom:4px">{{selectedMod.display_name||selectedMod.name||selectedMod.identifier}}</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:8px">{{selectedMod.identifier}} v{{selectedMod.version}}</div>
+            <div style="font-size:12px;margin-bottom:8px;line-height:1.6">{{selectedMod.abstract||'暂无描述'}}</div>
+            <div v-if="modDetail" style="font-size:12px;border-top:1px solid var(--border);padding-top:8px">
+              <div v-if="modDetail.author" style="margin-bottom:4px"><strong>作者:</strong> {{modDetail.author}}</div>
+              <div v-if="modDetail.license" style="margin-bottom:4px"><strong>许可证:</strong> {{modDetail.license}}</div>
+              <div v-if="modDetail.homepage" style="margin-bottom:4px"><strong>主页:</strong> <a :href="modDetail.homepage" target="_blank" style="color:var(--accent)">{{modDetail.homepage}}</a></div>
+              <div v-if="modDetail.repository" style="margin-bottom:4px"><strong>仓库:</strong> <a :href="modDetail.repository" target="_blank" style="color:var(--accent)">{{modDetail.repository}}</a></div>
+              <div v-if="modDetail.tags?.length" style="margin-bottom:4px"><strong>标签:</strong> {{modDetail.tags.join(', ')}}</div>
+              <div v-if="modDetail.depends?.length" style="margin-bottom:4px">
+                <strong>依赖:</strong>
+                <span v-for="d in modDetail.depends" :key="d" class="badge" style="background:var(--bg-tertiary);font-size:10px;margin:2px">{{d}}</span>
+              </div>
+              <div v-if="modDetail.conflicts?.length" style="margin-bottom:4px">
+                <strong style="color:var(--danger)">冲突:</strong>
+                <span v-for="c in modDetail.conflicts" :key="c" class="badge" style="background:rgba(248,81,73,0.2);color:var(--danger);font-size:10px;margin:2px">{{c}}</span>
+              </div>
+              <div v-if="modDetail.recommends?.length" style="margin-bottom:4px">
+                <strong style="color:var(--success)">推荐:</strong>
+                <span v-for="r in modDetail.recommends" :key="r" class="badge" style="background:rgba(63,185,80,0.2);color:var(--success);font-size:10px;margin:2px">{{r}}</span>
+              </div>
+            </div>
+            <div v-else-if="loadingDetail" style="font-size:12px;color:var(--text-secondary);text-align:center;padding:12px">加载详情中...</div>
+          </div>
+        </div>
+        <div v-else-if="modSearched&&!modResults.length" style="color:var(--text-secondary);padding:40px;text-align:center">未找到模组，尝试其他关键词</div>
+        <div v-else-if="!modSearched" style="color:var(--text-secondary);padding:40px;text-align:center">输入关键词搜索 CKAN 模组</div>
+
+        <details style="margin:12px 0;cursor:pointer">
+          <summary style="font-size:13px;color:var(--accent);font-weight:600">仓库管理</summary>
+          <div class="card" style="margin-top:8px">
+            <div class="btn-group" style="margin-bottom:8px">
+              <input class="form-input" style="flex:1" v-model="repoUrl" placeholder="仓库 URL">
+              <input class="form-input" style="width:120px" v-model="repoName" placeholder="名称(可选)">
+              <button class="btn btn-primary" @click="addRepo">添加</button>
+            </div>
+            <table class="table" v-if="repos.length">
+              <thead><tr><th>名称</th><th>URL</th><th>操作</th></tr></thead>
+              <tbody>
+                <tr v-for="r in repos" :key="r.name">
+                  <td>{{r.name}}</td><td style="font-size:11px">{{r.url}}</td>
+                  <td><button class="btn btn-danger" style="padding:2px 8px;font-size:11px" @click="removeRepo(r.name)">删除</button></td>
+                </tr>
+              </tbody>
+            </table>
+            <div v-else style="color:var(--text-secondary);padding:8px;font-size:12px">暂无自定义仓库</div>
+          </div>
+        </details>
+      </div>
+
+      <div v-if="modTab==='list'">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div></div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:12px;color:var(--text-secondary)">允许非名单模组</span>
+            <input type="checkbox" style="width:16px;height:16px" @change="setAllowNonListed($event.target.checked)">
+          </div>
+        </div>
+        <table class="table" v-if="modList.length">
+          <thead><tr><th>模组名</th><th>模组 ID</th><th>规则</th><th>操作</th></tr></thead>
+          <tbody>
+            <tr v-for="mod in modList" :key="mod.id||mod.identifier">
+              <td>{{mod.name}}</td>
+              <td style="font-size:12px">{{mod.identifier}}</td>
+              <td><span :class="'rule-badge-'+mod.rule.toLowerCase()">{{mod.rule}}</span></td>
+              <td>
+                <select class="inline-select" :value="mod.rule" @change="changeModRule(mod.id,$event.target.value)">
+                  <option value="Allow">Allow</option>
+                  <option value="Deny">Deny</option>
+                  <option value="Force">Force</option>
+                </select>
+                <button class="btn btn-danger" style="padding:3px 8px;font-size:11px" @click="removeFromModList(mod.id)">移除</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div v-else-if="!modListLoading" style="color:var(--text-secondary);padding:40px;text-align:center">名单为空</div>
+        <div class="loading" v-if="modListLoading">加载中...</div>
+      </div>
+    </div>
+
+    <div class="page" :class="{active:currentPage==='settings'}" v-if="!showPasswordLogin">
+      <div class="page-title">软件设置</div>
+      <div class="card">
+        <div class="section-title">密码设置</div>
+        <div class="form-group">
+          <label>用户名</label>
+          <div style="display:flex;gap:8px">
+            <input class="form-input" v-model="adminUsername" placeholder="管理员用户名">
+            <button class="btn btn-primary" @click="setAdminUsername">设置</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>密码</label>
+          <div style="display:flex;gap:8px">
+            <input class="form-input" v-model="adminPassword" type="password" placeholder="新密码（留空不修改）">
+            <button class="btn btn-primary" @click="setAdminPassword">设置</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title">外观</div>
+        <div class="form-group">
+          <label>主题</label>
+          <select class="form-input" v-model="appTheme" @change="setTheme">
+            <option value="dark">暗色</option>
+            <option value="light">亮色</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>语言</label>
+          <select class="form-input" v-model="appLanguage" @change="setLanguage">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title">关于</div>
+        <p style="color:var(--text-secondary);font-size:13px;line-height:1.6">
+          <strong>作者:</strong> xiaoou6630<br>
+          <strong>版本:</strong> 1.0.0<br>
+          <strong>技术栈:</strong> Python FastAPI + Vue.js 3
+        </p>
+      </div>
+    </div>
+
+    <div class="page" :class="{active:currentPage==='about'}" v-if="!showPasswordLogin">
+      <div class="page-title">关于</div>
+       <div class="card">
+        <h2 style="color:var(--accent);margin-bottom:12px">ML - KSP LMP 联机面板服</h2>
+        <p style="color:var(--text-secondary);line-height:1.8">
+          <strong>作者:</strong> xiaoou6630<br>
+          <strong>版本:</strong> 1.0.0<br>
+          <strong>用途:</strong> KSP (坎巴拉太空计划) LMP (LunaMultiplayer) 联机服务器管理器<br>
+          <strong>功能:</strong> 服务器管理、配置编辑、模组名单管理<br>
+          <strong>技术栈:</strong> Python FastAPI + Vue.js 3<br>
+        </p>
+      </div>
+    </div>
+
+    <div class="modal-overlay" v-if="showConfirmModal" @click.self="showConfirmModal=false">
+      <div class="modal">
+        <h3>{{confirmModal.title}}</h3>
+        <p>{{confirmModal.message}}</p>
+        <div class="btn-group">
+          <button class="btn btn-warning" @click="showConfirmModal=false">取消</button>
+          <button class="btn btn-danger" @click="confirmModal.action();showConfirmModal=false">确认</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" v-if="showAddModModal" @click.self="showAddModModal=false">
+      <div class="modal">
+        <h3>添加到名单</h3>
+        <p>模组: {{addModData.name}} ({{addModData.identifier}})</p>
+        <div class="form-group">
+          <label>规则</label>
+          <select class="form-input" v-model="addModData.rule">
+            <option value="Allow">Allow - 允许加载</option>
+            <option value="Deny">Deny - 禁止加载</option>
+            <option value="Force">Force - 强制加载</option>
+          </select>
+        </div>
+        <div class="btn-group" style="justify-content:flex-end">
+          <button class="btn btn-warning" @click="showAddModModal=false">取消</button>
+          <button class="btn btn-primary" @click="confirmAddMod">确认添加</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" v-if="showExportModal" @click.self="showExportModal=false">
+      <div class="modal" style="max-width:600px">
+        <h3>导出 .ckan</h3>
+        <div class="form-group"><label>Identifier</label><input class="form-input" v-model="exportMeta.identifier"></div>
+        <div class="form-group"><label>Name</label><input class="form-input" v-model="exportMeta.name"></div>
+        <div class="form-group"><label>Abstract</label><input class="form-input" v-model="exportMeta.abstract"></div>
+        <div class="form-group"><label>Author</label><input class="form-input" v-model="exportMeta.author"></div>
+        <div class="form-group"><label>License</label><input class="form-input" v-model="exportMeta.license"></div>
+        <div class="form-group"><label>Version</label><input class="form-input" v-model="exportMeta.version"></div>
+        <div class="form-group">
+          <label>选择模组 ({{Object.values(exportSelected).filter(Boolean).length}} 已选)</label>
+          <div class="export-mod-list">
+            <div v-for="mod in exportMods" :key="mod.identifier" class="export-mod-item">
+              <input type="checkbox" v-model="exportSelected[mod.identifier]">
+              <span>{{mod.name||mod.identifier}}</span>
+              <span :class="'rule-badge-'+mod.rule.toLowerCase()" style="margin-left:auto">{{mod.rule}}</span>
+            </div>
+            <div v-if="exportMods.length===0" style="font-size:12px;color:var(--text-secondary);padding:8px;text-align:center">暂无已添加的模组</div>
+          </div>
+        </div>
+        <div class="btn-group" style="justify-content:flex-end">
+          <button class="btn btn-warning" @click="showExportModal=false">取消</button>
+          <button class="btn btn-primary" @click="doExportCKAN" :disabled="!Object.values(exportSelected).filter(Boolean).length">导出</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+const {createApp,ref,reactive,computed,watch,onMounted,nextTick,onUnmounted} = Vue;
+
+createApp({
+  setup(){
+    const currentPage = ref('dashboard');
+    const showPasswordLogin = ref(false);
+    const serverStatus = reactive({online:false,pid:null,uptime:0,cpu_percent:0,memory_mb:0,player_count:0,player_names:[],last_start_time:null});
+    const sysInfo = reactive({cpu_percent:0,memory_total_gb:0,memory_used_gb:0,disk_total_gb:0,disk_used_gb:0});
+    const consoleLines = ref([]);
+    const consoleCommand = ref('');
+    const consoleBox = ref(null);
+    const serverLoading = ref(false);
+    const configFields = ref([]);
+    const configValues = reactive({});
+    const fieldStates = reactive({});
+    const configTab = ref('network');
+    const configSaving = ref(false);
+    const configSaved = ref(false);
+    const configSavedTime = ref('');
+    let configSaveTimer = null;
+    const modSearchQuery = ref('');
+    const modSearching = ref(false);
+    const browsingAll = ref(false);
+    const modSearched = ref(false);
+    const modResults = ref([]);
+    const modTab = ref('search');
+    const selectedMod = ref(null);
+    const modDetail = ref(null);
+    const loadingDetail = ref(false);
+    const showConfirmModal = ref(false);
+    const confirmModal = reactive({title:'',message:'',action:()=>{}});
+    const repos = ref([]);
+    const repoUrl = ref('');
+    const repoName = ref('');
+    const kspPath = ref('');
+    const kspPathExists = ref(false);
+    const kspFound = ref([]);
+    const kspScanned = ref(false);
+    const scanningKsp = ref(false);
+    const adminUsername = ref('admin');
+    const adminPassword = ref('');
+    const appTheme = ref(localStorage.getItem('ml_theme')||'dark');
+    const appLanguage = ref(localStorage.getItem('ml_lang')||'zh');
+    const modList = ref([]);
+    const modListLoading = ref(false);
+    const showAddModModal = ref(false);
+    const addModData = reactive({identifier:'',name:'',rule:'Allow'});
+    const showExportModal = ref(false);
+    const exportMeta = reactive({identifier:'my-ksp-modpack',name:'',abstract:'',author:'',license:'MIT',version:'1.0.0'});
+    const exportMods = ref([]);
+    const exportSelected = reactive({});
+
+    let ws = null;
+    let pollingTimer = null;
+    let sysPollingTimer = null;
+
+    const menuItems = [
+      {id:'dashboard',label:'仪表盘',icon:'&#9679;'},
+      {id:'console',label:'控制台',icon:'&#9000;'},
+      {id:'config',label:'配置编辑器',icon:'&#9881;'},
+      {id:'mods',label:'模组名单管理',icon:'&#9790;'},
+      {id:'settings',label:'软件设置',icon:'&#9881;'},
+      {id:'about',label:'关于',icon:'&#9432;'},
+    ];
+
+    const configCategories = [
+      {key:'network',label:'网络设置'},
+      {key:'game',label:'游戏设置'},
+      {key:'sync',label:'同步设置'},
+      {key:'mod',label:'Mod 控制'},
+    ];
+
+    const filteredConfigFields = computed(()=>configFields.value.filter(f=>f.category===configTab.value));
+    const memoryPercent = computed(()=>sysInfo.memory_total_gb>0?(sysInfo.memory_used_gb/sysInfo.memory_total_gb*100):0);
+    const validationErrors = computed(()=>Object.values(fieldStates).filter(s=>s.level==='error').length);
+    const validationWarnings = computed(()=>Object.values(fieldStates).filter(s=>s.level==='warning').length);
+
+    function formatUptime(sec){
+      if(!sec)return '--';
+      let s=Math.floor(sec);
+      let d=Math.floor(s/86400);s%=86400;
+      let h=Math.floor(s/3600);s%=3600;
+      let m=Math.floor(s/60);s%=60;
+      let parts=[];
+      if(d)parts.push(d+'天');if(h)parts.push(h+'时');if(m)parts.push(m+'分');parts.push(s+'秒');
+      return parts.join(' ');
+    }
+    function formatLine(l){return l.line||l}
+    function lineColor(l){const t=l.line||l;if(t.startsWith('['))return'#8b949e';if(t.startsWith('>'))return'#58a6ff';if(t.includes('error')||t.includes('ERROR'))return'#f85149';return'#0f0'}
+    function fieldState(key){return fieldStates[key]||{cls:'',level:'',msg:''}}
+
+    function navigate(page){currentPage.value=page}
+
+    function connectWS(){
+      const proto=location.protocol==='https:'?'wss':'ws';
+      ws=new WebSocket(`${proto}://${location.host}/ws`);
+      ws.onmessage=e=>{
+        try{const d=JSON.parse(e.data);
+          if(d.type==='console'){consoleLines.value.push(d);if(consoleLines.value.length>500)consoleLines.value=consoleLines.value.slice(-500);scrollConsole()}
+          if(d.type==='status'){Object.assign(serverStatus,d.data)}
+          if(d.type==='notification'){}
+        }catch{}
+      };
+      ws.onclose=()=>{setTimeout(connectWS,3000)};
+      ws.onerror=()=>{ws.close()}
+    }
+
+    function scrollConsole(){nextTick(()=>{if(consoleBox.value)consoleBox.value.scrollTop=consoleBox.value.scrollHeight})}
+
+    async function api(path,opts={}){
+      const base=opts.base||'';
+      const url=`/api${path}`;
+      const r=await fetch(url,{headers:{'Content-Type':'application/json'},...opts,body:opts.body?(typeof opts.body==='string'?opts.body:JSON.stringify(opts.body)):undefined});
+      if(!r.ok){const e=await r.json().catch(()=>({detail:'请求失败'}));throw new Error(e.detail||e.message||'请求失败')}
+      return r.json()
+    }
+
+    async function serverStart(){serverLoading.value=true;try{await api('/server/start',{method:'POST'});serverStatus.online=true}catch(e){alert('启动失败: '+e.message)}serverLoading.value=false}
+    async function serverStop(){serverLoading.value=true;try{await api('/server/stop',{method:'POST'});serverStatus.online=false}catch(e){alert('停止失败: '+e.message)}serverLoading.value=false}
+    async function serverRestart(){if(!confirm('确定要强制重启服务器吗？'))return;serverLoading.value=true;try{await api('/server/force-restart',{method:'POST'})}catch(e){alert('重启失败: '+e.message)}serverLoading.value=false}
+
+    async function sendCommand(){
+      if(!consoleCommand.value.trim()||!serverStatus.online)return;
+      try{await api('/server/command',{method:'POST',body:JSON.stringify({command:consoleCommand.value.trim()})});consoleCommand.value=''}catch(e){alert('发送失败: '+e.message)}
+    }
+
+    async function loadConfig(){
+      try{const r=await api('/config/fields');configFields.value=r.fields||[];
+        for(const f of configFields.value){configValues[f.key]=f.value||''}
+        validateAll()
+      }catch(e){console.error('加载配置失败',e)}
+    }
+
+    async function validateField(key){
+      const vals={};for(const k in configValues)vals[k]=configValues[k];
+      try{const r=await api('/config/validate',{method:'POST',body:JSON.stringify({values:vals})});
+        for(const res of r.results||[]){if(res.key===key||!res.key){fieldStates[res.key]=res}}
+      }catch(e){}
+      scheduleAutoSave()
+    }
+
+    function scheduleAutoSave(){
+      if(configSaveTimer)clearTimeout(configSaveTimer);
+      configSaveTimer=setTimeout(autoSave,1200);
+    }
+
+    async function autoSave(){
+      if(validationErrors.value>0)return;
+      const vals={};for(const k in configValues)vals[k]=configValues[k];
+      configSaving.value=true;
+      try{
+        const r=await api('/config/save',{method:'POST',body:JSON.stringify({values:vals})});
+        const now=new Date();configSavedTime.value=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0')+':'+now.getSeconds().toString().padStart(2,'0');
+        configSaved.value=true;setTimeout(()=>{configSaved.value=false},3000);
+        if(r.restart_hint && serverStatus.online){
+          if(!window._ml_restart_hint_shown){
+            window._ml_restart_hint_shown=true;
+            setTimeout(()=>{
+              if(confirm(r.restart_hint + '\n是否立即重启服务器？')){
+                serverRestart();
+              }
+              window._ml_restart_hint_shown=false;
+            },500);
+          }
+        }
+      }catch(e){
+        console.error('自动保存失败',e);
+        alert('自动保存失败: '+e.message);
+      }
+      configSaving.value=false
+    }
+
+    async function validateAll(){const vals={};for(const k in configValues)vals[k]=configValues[k];
+      try{const r=await api('/config/validate',{method:'POST',body:JSON.stringify({values:vals})});
+        for(const k in fieldStates)delete fieldStates[k];
+        for(const res of r.results||[]){fieldStates[res.key]=res}
+      }catch(e){}
+    }
+
+    async function doSave(vals){
+      configSaving.value=true;
+      try{await api('/config/save',{method:'POST',body:JSON.stringify({values:vals})});alert('配置已保存');await loadConfig()}catch(e){alert('保存失败: '+e.message)}
+      configSaving.value=false
+    }
+
+    async function saveConfig(){
+      const vals={};for(const k in configValues)vals[k]=configValues[k];
+      await validateAll();
+      if(validationErrors.value>0)return;
+      if(validationWarnings.value>0){confirmModal.title='警告';confirmModal.message='配置中存在警告项，是否仍然保存？';confirmModal.action=async()=>{await doSave(vals)};showConfirmModal.value=true;return}
+      await doSave(vals)
+    }
+
+    async function doSave(vals){
+      configSaving.value=true;
+      try{await api('/config/save',{method:'POST',body:JSON.stringify({values:vals})});alert('配置已保存');await loadConfig()}catch(e){alert('保存失败: '+e.message)}
+      configSaving.value=false
+    }
+
+    async function browseAllMods(){browsingAll.value=true;modSearching.value=true;modSearched.value=true;modTab.value='search';
+      try{const r=await api('/mods/browse');modResults.value=r.mods||[]}catch(e){modResults.value=[]}
+      modSearching.value=false;browsingAll.value=false
+    }
+
+    async function searchMods(){modSearching.value=true;modSearched.value=true;
+      try{const r=await api(`/mods/search?query=${encodeURIComponent(modSearchQuery.value)}`);
+        modResults.value=r.mods||[]
+      }catch(e){modResults.value=[]}
+      modSearching.value=false
+    }
+
+    async function showModDetail(mod){
+      selectedMod.value=mod;loadingDetail.value=true;modDetail.value=null;
+      try{const r=await api(`/mods/${mod.identifier}/detail`);modDetail.value=r}catch(e){modDetail.value={error:e.message}}
+      loadingDetail.value=false
+    }
+
+    async function loadModList(){
+      modListLoading.value=true;modTab.value='list';
+      try{const r=await api('/mods/list');modList.value=r.mods||[]}catch(e){modList.value=[]}
+      modListLoading.value=false
+    }
+
+    function addToModList(identifier, name){
+      addModData.identifier=identifier;
+      addModData.name=name;
+      addModData.rule='Allow';
+      showAddModModal.value=true
+    }
+
+    async function confirmAddMod(){
+      try{
+        await api('/mods/list/add',{method:'POST',body:JSON.stringify({identifier:addModData.identifier,name:addModData.name,rule:addModData.rule})});
+        showAddModModal.value=false;loadModList()
+      }catch(e){alert('添加失败: '+e.message)}
+    }
+
+    async function changeModRule(modId, newRule){
+      try{await api(`/mods/list/${encodeURIComponent(modId)}`,{method:'PUT',body:JSON.stringify({rule:newRule})});loadModList()}catch(e){alert('修改失败: '+e.message)}
+    }
+
+    async function removeFromModList(modId){
+      try{await api(`/mods/list/${encodeURIComponent(modId)}`,{method:'DELETE'});loadModList()}catch(e){alert('移除失败: '+e.message)}
+    }
+
+    function showExportCKAN(){
+      exportMeta.identifier='my-ksp-modpack';
+      exportMeta.name='';
+      exportMeta.abstract='';
+      exportMeta.author='';
+      exportMeta.license='MIT';
+      exportMeta.version='1.0.0';
+      exportMods.value=[...modList.value];
+      for(const k in exportSelected)delete exportSelected[k];
+      exportMods.value.forEach(m=>{exportSelected[m.identifier]=true});
+      showExportModal.value=true
+    }
+
+    async function doExportCKAN(){
+      const selected=exportMods.value.filter(m=>exportSelected[m.identifier]);
+      try{
+        const r=await api('/export-ckan',{method:'POST',body:JSON.stringify({
+          meta:{identifier:exportMeta.identifier,name:exportMeta.name,abstract:exportMeta.abstract,author:exportMeta.author,license:exportMeta.license,version:exportMeta.version},
+          mods:selected.map(m=>({identifier:m.identifier,name:m.name,rule:m.rule}))
+        })});
+        const blob=new Blob([JSON.stringify(r,null,2)],{type:'application/json'});
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');
+        a.href=url;a.download=`${exportMeta.identifier}.ckan`;a.click();
+        URL.revokeObjectURL(url);
+        showExportModal.value=false
+      }catch(e){alert('导出失败: '+e.message)}
+    }
+
+    async function setAllowNonListed(val){
+      try{await api('/mods/list/allow-non-listed',{method:'PUT',body:JSON.stringify({allow:val})})}catch(e){alert('设置失败: '+e.message)}
+    }
+
+    async function loadRepos(){
+      try{const r=await api('/mods/repos');repos.value=r.repos||[]}catch(e){}
+    }
+
+    async function addRepo(){
+      if(!repoUrl.value.trim())return;
+      try{await api('/mods/repos',{method:'POST',body:JSON.stringify({url:repoUrl.value.trim(),name:repoName.value.trim()})});repoUrl.value='';repoName.value='';loadRepos()}catch(e){alert('添加失败: '+e.message)}
+    }
+
+    async function removeRepo(name){
+      try{await api(`/mods/repos/${encodeURIComponent(name)}`,{method:'DELETE'});loadRepos()}catch(e){alert('删除失败: '+e.message)}
+    }
+
+    async function updateCkan(){
+      try{await api('/mods/update',{method:'POST'});alert('CKAN 已更新');loadRepos()}catch(e){alert('更新失败: '+e.message)}
+    }
+
+    async function loadSystemInfo(){
+      try{const r=await api('/system/info');Object.assign(sysInfo,r)}catch(e){}
+    }
+
+    async function loadKspPath(){
+      try{const r=await api('/settings/ksp-path');kspPath.value=r.path;kspPathExists.value=r.exists}catch(e){}
+    }
+
+    async function saveKspPath(){
+      if(!kspPath.value.trim())return;
+      try{await api('/settings/ksp-path',{method:'POST',body:JSON.stringify({path:kspPath.value.trim()})});kspPathExists.value=true;alert('KSP 路径已保存，重启面板服后 CKAN 安装即可使用')}catch(e){alert('保存失败: '+e.message)}
+    }
+
+    async function scanKsp(){
+      scanningKsp.value=true;kspScanned.value=true;
+      try{const r=await api('/settings/ksp-detect');kspFound.value=r.found||[];if(!kspPath.value)kspPath.value=r.current}catch(e){kspFound.value=[]}
+      scanningKsp.value=false
+    }
+
+    function selectKsp(gamedata){
+      kspPath.value=gamedata;kspPathExists.value=true
+    }
+
+    async function setAdminUsername(){
+      if(!adminUsername.value)return;
+      try{await api('/auth/set-username',{method:'POST',body:JSON.stringify({username:adminUsername.value})});alert('用户名已设置')}catch(e){alert('设置失败: '+e.message)}
+    }
+    async function setAdminPassword(){
+      if(!adminPassword.value)return;
+      try{await api('/auth/set-password',{method:'POST',body:JSON.stringify({password:adminPassword.value})});alert('密码已设置');adminPassword.value=''}catch(e){alert('设置失败: '+e.message)}
+    }
+    function setTheme(){
+      localStorage.setItem('ml_theme',appTheme.value);
+      document.documentElement.setAttribute('data-theme',appTheme.value);
+      applyTheme();
+    }
+    function setLanguage(){
+      localStorage.setItem('ml_lang',appLanguage.value);
+    }
+    function applyTheme(){
+      const t=appTheme.value;
+      if(t==='light'){
+        document.documentElement.style.setProperty('--bg-primary','#ffffff');
+        document.documentElement.style.setProperty('--bg-secondary','#f6f8fa');
+        document.documentElement.style.setProperty('--bg-tertiary','#eaeef2');
+        document.documentElement.style.setProperty('--text-primary','#1f2328');
+        document.documentElement.style.setProperty('--text-secondary','#656d76');
+        document.documentElement.style.setProperty('--border','#d0d7de');
+      }else{
+        document.documentElement.style.setProperty('--bg-primary','#0d1117');
+        document.documentElement.style.setProperty('--bg-secondary','#161b22');
+        document.documentElement.style.setProperty('--bg-tertiary','#21262d');
+        document.documentElement.style.setProperty('--text-primary','#e6edf3');
+        document.documentElement.style.setProperty('--text-secondary','#8b949e');
+        document.documentElement.style.setProperty('--border','#30363d');
+      }
+    }
+
+    onMounted(async()=>{
+      applyTheme();
+      connectWS();
+        loadConfig();
+        loadModList();
+        loadSystemInfo();
+        loadRepos();
+        loadKspPath();
+        scanKsp();
+        pollingTimer=setInterval(async()=>{try{const r=await api('/server/status');Object.assign(serverStatus,r)}catch(e){}},3000);
+        sysPollingTimer=setInterval(loadSystemInfo,10000);
+        setTimeout(validateAll,500);
+    });
+
+    onUnmounted(()=>{if(pollingTimer)clearInterval(pollingTimer);if(sysPollingTimer)clearInterval(sysPollingTimer);if(ws)ws.close()});
+
+    return {
+      currentPage,showPasswordLogin,menuItems,
+      serverStatus,sysInfo,consoleLines,consoleCommand,consoleBox,serverLoading,
+      configFields,configValues,fieldStates,configTab,configCategories,filteredConfigFields,configSaving,configSaved,configSavedTime,
+      modSearchQuery,modSearching,browsingAll,modSearched,modResults,modTab,selectedMod,modDetail,loadingDetail,
+      showConfirmModal,confirmModal,
+      repos,repoUrl,repoName,kspPath,kspPathExists,kspFound,kspScanned,scanningKsp,
+      adminUsername,adminPassword,setAdminUsername,setAdminPassword,
+      appTheme,appLanguage,setTheme,setLanguage,
+      modList,modListLoading,showAddModModal,addModData,showExportModal,exportMeta,exportMods,exportSelected,
+      memoryPercent,validationErrors,validationWarnings,
+      formatUptime,formatLine,lineColor,fieldState,navigate,
+      serverStart,serverStop,serverRestart,sendCommand,
+      loadConfig,validateField,validateAll,autoSave,
+      searchMods,browseAllMods,showModDetail,loadModList,addToModList,confirmAddMod,changeModRule,removeFromModList,
+      showExportCKAN,doExportCKAN,setAllowNonListed,
+      loadRepos,addRepo,removeRepo,updateCkan,
+      loadKspPath,saveKspPath,scanKsp,selectKsp,
+      JSON
+    }
+  }
+}).mount('#app')
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-16"?>
+<IntervalSettingsDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <VesselUpdatesMsInterval>100</VesselUpdatesMsInterval>
+  <SecondaryVesselUpdatesMsInterval>500</SecondaryVesselUpdatesMsInterval>
+  <SendReceiveThreadTickMs>10</SendReceiveThreadTickMs>
+  <MainTimeTick>30</MainTimeTick>
+  <BackupIntervalMs>300000</BackupIntervalMs>
+  <GcMinutesInterval>60</GcMinutesInterval>
+  <MemoryDiagnosticsMinutesInterval>1</MemoryDiagnosticsMinutesInterval>
+</IntervalSettingsDefinition>

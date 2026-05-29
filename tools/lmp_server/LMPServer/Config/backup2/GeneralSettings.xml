@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<GeneralSettingsDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ServerName>My KSP Server</ServerName>
+  <Description />
+  <CountryCode />
+  <WebsiteText>LMP</WebsiteText>
+  <Website>lunamultiplayer.com</Website>
+  <Password />
+  <AdminPassword />
+  <ServerMotd>Welcome!</ServerMotd>
+  <PrintMotdInChat>false</PrintMotdInChat>
+  <MaxPlayers>12</MaxPlayers>
+  <MaxUsernameLength>15</MaxUsernameLength>
+  <AutoDekessler>30</AutoDekessler>
+  <AutoNuke>0</AutoNuke>
+  <Cheats>true</Cheats>
+  <AllowSackKerbals>false</AllowSackKerbals>
+  <ConsoleIdentifier>Server</ConsoleIdentifier>
+  <GameDifficulty>Normal</GameDifficulty>
+  <GameMode>SANDBOX</GameMode>
+  <ModControl>false</ModControl>
+  <NumberOfAsteroids>100</NumberOfAsteroids>
+  <NumberOfComets>5</NumberOfComets>
+  <TerrainQuality>High</TerrainQuality>
+  <SafetyBubbleDistance>100</SafetyBubbleDistance>
+  <MaxVesselParts>200</MaxVesselParts>
+</GeneralSettingsDefinition>

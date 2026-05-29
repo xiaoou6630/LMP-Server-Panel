@@ -1,0 +1,21 @@
+[09:37:23][Info]: Remember! Quit the server by using 'Control + C' so a backup is properly made before closing!
+[09:37:23][Info]: Documentation available at https://github.com/LunaMultiplayer/LunaMultiplayer/wiki
+[09:37:23][LMP]: Luna Server version: 0.29.1 (e:\daima\ml\tools\lmp_server\LMPServer\)
+[09:37:23][Error]: Failed to initialize CraftCreationAndRemoval.txt: The process cannot access the file 'e:\daima\ml\tools\lmp_server\LMPServer\logs\CraftCreationAndRemoval.txt' because it is being used by another process.
+[09:37:23][Debug]: Loading universe... 0.62KB
+[09:37:23][Debug]: Loading groups...
+[09:37:23][Debug]: Loading settings...
+[09:37:23][Fatal]: Error while trying to read e:\daima\ml\tools\lmp_server\LMPServer\Config\GeneralSettings.xml. Default settings will be used. Please remove the file so a new one can be generated
+[09:37:23][Fatal]: Error while trying to read e:\daima\ml\tools\lmp_server\LMPServer\Config\WarpSettings.xml. Default settings will be used. Please remove the file so a new one can be generated
+[09:37:23][Info]: Your GameplaySettings file is different than your GeneralSettings - Difficulty value. So the difficulty setting will be set as "Custom". In case you want to use the default setting values for Normal. Remove the GameplaySettings.xml file so it's recreated again
+[09:37:23][Warning]: Default server name detected! Consider changing it in GeneralSettings.xml.
+[09:37:23][Warning]: Default server description detected! Consider changing it in GeneralSettings.xml.
+[09:37:23][Debug]: Loading mod control...
+[09:37:23][Debug]: Loading plugins...
+[09:37:23][LMP]: Starting 'Luna Server' on Address [::] Port 9999... 
+[09:37:28][LMP]: Master server registration is active
+[09:37:28][LMP]: All systems up and running. Поехали!
+[09:37:30][Debug]: Detected NAT addresses: 
+[09:37:58][Warning]: There is a new version of LMP! Please download it! Current: 0.29.1 Latest: 0.29.2
+[09:37:58][Debug]: Your version is compatible with the latest version so you will still be listed in the master servers.
+[09:38:11][LMP]: Exiting... Please wait until all threads are finished

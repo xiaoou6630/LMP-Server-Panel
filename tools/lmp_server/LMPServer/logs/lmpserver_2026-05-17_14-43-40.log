@@ -1,0 +1,17 @@
+[06:43:40][Info]: Remember! Quit the server by using 'Control + C' so a backup is properly made before closing!
+[06:43:40][Info]: Documentation available at https://github.com/LunaMultiplayer/LunaMultiplayer/wiki
+[06:43:40][LMP]: Luna Server version: 0.29.1 (E:\daima\ml\tools\lmp_server\LMPServer\)
+[06:43:40][Debug]: Loading universe... 0.62KB
+[06:43:40][Debug]: Loading groups...
+[06:43:40][Debug]: Loading settings...
+[06:43:40][Warning]: Default server name detected! Consider changing it in GeneralSettings.xml.
+[06:43:40][Warning]: Default server description detected! Consider changing it in GeneralSettings.xml.
+[06:43:40][Debug]: Loading mod control...
+[06:43:40][Debug]: Loading plugins...
+[06:43:40][LMP]: Starting 'Luna Server' on Address :: Port 8800... 
+[06:43:46][LMP]: All systems up and running. Поехали!
+[06:43:46][LMP]: Master server registration is active
+[06:43:46][LMP]: End of stdin, stopping command listener
+[06:43:48][Debug]: Detected NAT addresses: 125.82.34.180:1966
+[06:53:40][Debug]: Deleting saved log 'CraftCreationAndRemoval', reason: Expired!
+[06:53:40][Error]: Exception while trying to delete 'E:\daima\ml\tools\lmp_server\LMPServer\logs\CraftCreationAndRemoval.txt'!, Exception: The process cannot access the file 'E:\daima\ml\tools\lmp_server\LMPServer\logs\CraftCreationAndRemoval.txt' because it is being used by another process.

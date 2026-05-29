@@ -1,0 +1,21 @@
+[06:11:37][Info]: Remember! Quit the server by using 'Control + C' so a backup is properly made before closing!
+[06:11:37][Info]: Documentation available at https://github.com/LunaMultiplayer/LunaMultiplayer/wiki
+[06:11:38][LMP]: Luna Server version: 0.29.1 (E:\daima\ml\tools\lmp_server\LMPServer\)
+[06:11:38][Debug]: Loading universe... 0.62KB
+[06:11:38][Debug]: Loading groups...
+[06:11:38][Debug]: Loading settings...
+[06:11:38][Warning]: Default server name detected! Consider changing it in GeneralSettings.xml.
+[06:11:38][Warning]: Default server description detected! Consider changing it in GeneralSettings.xml.
+[06:11:38][Debug]: Loading mod control...
+[06:11:38][Debug]: Loading plugins...
+[06:11:38][LMP]: Starting 'Luna Server' on Address :: Port 8800... 
+[06:11:43][LMP]: All systems up and running. Поехали!
+[06:11:43][LMP]: Master server registration is active
+[06:11:43][LMP]: End of stdin, stopping command listener
+[06:12:07][Debug]: Detected NAT addresses: 
+[06:21:38][Debug]: Deleting saved log 'CraftCreationAndRemoval', reason: Expired!
+[06:21:38][Error]: Exception while trying to delete 'E:\daima\ml\tools\lmp_server\LMPServer\logs\CraftCreationAndRemoval.txt'!, Exception: The process cannot access the file 'E:\daima\ml\tools\lmp_server\LMPServer\logs\CraftCreationAndRemoval.txt' because it is being used by another process.
+[06:31:38][Debug]: Deleting saved log 'CraftCreationAndRemoval', reason: Expired!
+[06:31:38][Error]: Exception while trying to delete 'E:\daima\ml\tools\lmp_server\LMPServer\logs\CraftCreationAndRemoval.txt'!, Exception: The process cannot access the file 'E:\daima\ml\tools\lmp_server\LMPServer\logs\CraftCreationAndRemoval.txt' because it is being used by another process.
+[06:41:38][Debug]: Deleting saved log 'CraftCreationAndRemoval', reason: Expired!
+[06:41:38][Error]: Exception while trying to delete 'E:\daima\ml\tools\lmp_server\LMPServer\logs\CraftCreationAndRemoval.txt'!, Exception: The process cannot access the file 'E:\daima\ml\tools\lmp_server\LMPServer\logs\CraftCreationAndRemoval.txt' because it is being used by another process.

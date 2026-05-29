@@ -1,0 +1,38 @@
+[11:14:22][Info]: Remember! Quit the server by using 'Control + C' so a backup is properly made before closing!
+[11:14:22][Info]: Documentation available at https://github.com/LunaMultiplayer/LunaMultiplayer/wiki
+[11:14:22][LMP]: Luna Server version: 0.29.1 (E:\daima\ml\tools\lmp_server\LMPServer\)
+[11:14:22][Debug]: Loading universe... 0.62KB
+[11:14:22][Debug]: Loading groups...
+[11:14:22][Debug]: Loading settings...
+[11:14:23][Info]: Your GameplaySettings file is different than your GeneralSettings - Difficulty value. So the difficulty setting will be set as "Custom". In case you want to use the default setting values for Normal. Remove the GameplaySettings.xml file so it's recreated again
+[11:14:23][Warning]: Default server description detected! Consider changing it in GeneralSettings.xml.
+[11:14:23][Debug]: Loading mod control...
+[11:14:23][Debug]: Loading plugins...
+[11:14:23][LMP]: Starting 'ML Modified Server' on Address [::] Port 8802... 
+[11:14:28][LMP]: All systems up and running. Поехали!
+[11:14:28][LMP]: Master server registration is active
+[11:14:30][Debug]: Detected NAT addresses: 
+[11:14:58][Warning]: There is a new version of LMP! Please download it! Current: 0.29.1 Latest: 0.29.2
+[11:14:58][Debug]: Your version is compatible with the latest version so you will still be listed in the master servers.
+[11:15:28][Warning]: There is a new version of LMP! Please download it! Current: 0.29.1 Latest: 0.29.2
+[11:15:28][Debug]: Your version is compatible with the latest version so you will still be listed in the master servers.
+[11:15:58][Warning]: There is a new version of LMP! Please download it! Current: 0.29.1 Latest: 0.29.2
+[11:15:58][Debug]: Your version is compatible with the latest version so you will still be listed in the master servers.
+[11:16:28][Warning]: There is a new version of LMP! Please download it! Current: 0.29.1 Latest: 0.29.2
+[11:16:28][Debug]: Your version is compatible with the latest version so you will still be listed in the master servers.
+[11:16:58][Warning]: There is a new version of LMP! Please download it! Current: 0.29.1 Latest: 0.29.2
+[11:16:58][Debug]: Your version is compatible with the latest version so you will still be listed in the master servers.
+[11:17:28][Warning]: There is a new version of LMP! Please download it! Current: 0.29.1 Latest: 0.29.2
+[11:17:28][Debug]: Your version is compatible with the latest version so you will still be listed in the master servers.
+[11:17:58][Warning]: There is a new version of LMP! Please download it! Current: 0.29.1 Latest: 0.29.2
+[11:17:58][Debug]: Your version is compatible with the latest version so you will still be listed in the master servers.
+[11:18:28][Warning]: There is a new version of LMP! Please download it! Current: 0.29.1 Latest: 0.29.2
+[11:18:28][Debug]: Your version is compatible with the latest version so you will still be listed in the master servers.
+[11:18:58][Warning]: There is a new version of LMP! Please download it! Current: 0.29.1 Latest: 0.29.2
+[11:18:58][Debug]: Your version is compatible with the latest version so you will still be listed in the master servers.
+[11:19:28][Warning]: There is a new version of LMP! Please download it! Current: 0.29.1 Latest: 0.29.2
+[11:19:28][Debug]: Your version is compatible with the latest version so you will still be listed in the master servers.
+[11:19:58][Warning]: There is a new version of LMP! Please download it! Current: 0.29.1 Latest: 0.29.2
+[11:19:58][Debug]: Your version is compatible with the latest version so you will still be listed in the master servers.
+[11:20:28][Warning]: There is a new version of LMP! Please download it! Current: 0.29.1 Latest: 0.29.2
+[11:20:28][Debug]: Your version is compatible with the latest version so you will still be listed in the master servers.

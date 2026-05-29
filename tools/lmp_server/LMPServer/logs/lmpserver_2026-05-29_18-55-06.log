@@ -1,0 +1,19 @@
+[10:55:06][Info]: Remember! Quit the server by using 'Control + C' so a backup is properly made before closing!
+[10:55:06][Info]: Documentation available at https://github.com/LunaMultiplayer/LunaMultiplayer/wiki
+[10:55:06][LMP]: Luna Server version: 0.29.1 (e:\daima\ml\tools\lmp_server\LMPServer\)
+[10:55:06][Debug]: Loading universe... 0.62KB
+[10:55:06][Debug]: Loading groups...
+[10:55:06][Debug]: Loading settings...
+[10:55:06][Info]: Your GameplaySettings file is different than your GeneralSettings - Difficulty value. So the difficulty setting will be set as "Custom". In case you want to use the default setting values for Normal. Remove the GameplaySettings.xml file so it's recreated again
+[10:55:06][Warning]: Default server name detected! Consider changing it in GeneralSettings.xml.
+[10:55:06][Warning]: Default server description detected! Consider changing it in GeneralSettings.xml.
+[10:55:06][Debug]: Loading mod control...
+[10:55:06][Debug]: Loading plugins...
+[10:55:06][LMP]: Starting 'Luna Server' on Address [::] Port 8801... 
+[10:55:11][LMP]: All systems up and running. Поехали!
+[10:55:11][LMP]: Master server registration is active
+[10:55:13][Debug]: Detected NAT addresses: 
+[10:55:41][Warning]: There is a new version of LMP! Please download it! Current: 0.29.1 Latest: 0.29.2
+[10:55:41][Debug]: Your version is compatible with the latest version so you will still be listed in the master servers.
+[10:56:11][Warning]: There is a new version of LMP! Please download it! Current: 0.29.1 Latest: 0.29.2
+[10:56:11][Debug]: Your version is compatible with the latest version so you will still be listed in the master servers.

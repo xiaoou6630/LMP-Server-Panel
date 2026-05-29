@@ -1,0 +1,4 @@
+#Incorrectly editing this file will cause weirdness. If there is any errors, the universe time will be reset.
+#This file can only be edited if the server is stopped.
+#It must always contain ONLY 1 line which will have the date and time when the server started in UTC
+2026-05-01T07:45:47

@@ -1,0 +1,3 @@
+# Craft Creation and Removal audit log
+# Server started at 2026-05-29 11:24:55 UTC
+# Format: [Timestamp UTC] Vessel <GUID> (<Vessel Name>) created/removed by player <Player> (<Reason>)

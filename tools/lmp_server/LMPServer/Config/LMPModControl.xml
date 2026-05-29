@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<ModControlStructure xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <AllowNonListedPlugins>true</AllowNonListedPlugins>
+  <RequiredExpansions/>
+  <AllowedParts/>
+  <AllowedResources/>
+  <MandatoryPlugins>
+    <DllFile>
+      <Text>(ATHSS) AtomicTech Hardware Serializing System</Text>
+      <Link/>
+      <FilePath>AtomicTechFlags-ATHSS</FilePath>
+      <Sha/>
+    </DllFile>
+  </MandatoryPlugins>
+  <OptionalPlugins/>
+  <ForbiddenPlugins/>
+  <MandatoryParts/>
+</ModControlStructure>

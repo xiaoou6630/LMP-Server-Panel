@@ -1,0 +1,22 @@
+port=8888
+ip=[::]
+maxPlayers=10
+name=Frontend Test Server
+motd=Hi %Name%!
+Welcome to %ServerName%.
+Online players: %PlayerCount%
+updateInterval=100
+autoDekessler=true
+dekesslerMinTime=30
+modControlMode=BLACKLIST
+dropSpamAccounts=True
+totalSaveGameBans=10
+registerPrivateIp=true
+heartbeatMs=100
+saveInterval=300000
+warpMode=Subspace
+gameMode=Sandbox
+allowStockVessels=false
+cheats=true
+numberOfAsteroids=5
+spectateTimeout=600
