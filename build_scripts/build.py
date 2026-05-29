@@ -48,7 +48,7 @@ def find_upx():
 
 def build():
     print("=" * 60)
-    print(f"  ML Server Manager 打包脚本")
+    print(f"  LMP Server Panel 打包脚本")
     print(f"  版本: {settings.APP_VERSION}")
     print("=" * 60)
 
@@ -76,7 +76,7 @@ def build():
     release_dir = ROOT / "release"
     release_dir.mkdir(exist_ok=True)
 
-    exe_name = "ML_Server_Manager"
+    exe_name = "LMP_Server_Panel"
 
     tools_dir = ROOT / "tools"
     tools_status = {
@@ -160,7 +160,7 @@ def build():
             "版本: " + settings.APP_VERSION + "\n"
             "=" * 50 + "\n\n"
             "快速开始:\n"
-            "1. 双击 ML_Server_Manager.exe 启动程序\n"
+            "1. 双击 LMP_Server_Panel.exe 启动程序\n"
             "2. 浏览器打开 http://127.0.0.1:8080\n"
             "3. 首次使用请按提示设置管理员密码\n"
             "4. 在网页界面中点击「启动服务器」\n\n"
@@ -181,9 +181,9 @@ def build():
         )
         print(f"  README 已生成: {readme}")
 
-        zip_name = release_dir / "ML_Server_Manager.zip"
+        zip_name = release_dir / "LMP_Server_Panel.zip"
         print(f"\n正在打包 ZIP...")
-        zip_root = ROOT / "ML_Server_Manager"
+        zip_root = ROOT / "LMP_Server_Panel"
         if zip_root.exists():
             shutil.rmtree(zip_root)
         zip_root.mkdir()

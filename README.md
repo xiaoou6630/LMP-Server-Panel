@@ -1,6 +1,6 @@
-# ML Server Manager
+# LMP-Server-Panel
 
-KSP（坎巴拉太空计划）多人联机服务端管理工具，基于 Web 界面管理 LMP（Luna Multiplayer）服务器配置、模组名单和服务器运行状态。
+KSP（坎巴拉太空计划）LMP 多人联机服务器管理面板，基于 Web 界面管理 LMP 服务器配置、模组名单和服务器运行状态。
 
 ## 功能特性
 
@@ -34,7 +34,7 @@ venv\Scripts\python run.py
 venv\Scripts\python build_scripts\build.py
 ```
 
-打包完成后在 `release/` 目录下找到 `ML_Server_Manager.exe`。
+打包完成后在 `release/` 目录下找到 `LMP_Server_Panel.exe`。
 
 ## 技术栈
 
