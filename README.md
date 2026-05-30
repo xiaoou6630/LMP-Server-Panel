@@ -64,6 +64,13 @@ ML/
 └── run.py             # 启动脚本
 ```
 
+## 第三方工具下载
+
+本项目不包含 LMP 和 CKAN 程序，请自行下载后放入 `tools/` 目录：
+
+- **LMP (Luna Multiplayer)**: https://github.com/LunaMultiplayer/LunaMultiplayer/releases
+- **CKAN**: https://github.com/KSP-CKAN/CKAN/releases
+
 ## 注意事项
 
 - 修改配置后需重启服务器才能生效
