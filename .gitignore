@@ -17,10 +17,12 @@ dist/
 # Database
 data/ml.db
 data/*.db
+data/ksp_fake/
 
-# Logs
+# Logs and history
 logs/
 *.log
+*.txt
 
 # Archives
 *.zip
@@ -36,13 +38,15 @@ logs/
 .DS_Store
 Thumbs.db
 
-# Source code directories (not needed in repo)
-ckan-m源码/
-ckan*源码*/
-lmp*源码*/
+# Source code directories (third-party source code)
+*源码*/
+*源码（*/
+ckan-m*/
+lmp*/
 
-# Data files (fake KSP)
-data/ksp_fake/
+# Prompt file (contains AI instructions)
+prompt.md
+prompt.txt
 
 # Temporary files
 nul
@@ -51,6 +55,4 @@ compare_*.py
 .env
 
 # Third party tools (users download these themselves)
-tools/lmp_server/
-tools/ckan/
-tools/easytier/
+tools/
